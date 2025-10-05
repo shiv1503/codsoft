@@ -3,7 +3,7 @@ from tkinter import ttk
 
 # App window
 root = tk.Tk()
-root.title("Modern Calculator")
+root.title("CALCULATOR")
 root.geometry("360x500")
 root.resizable(False, False)
 root.configure(bg="#1c1c1c")
