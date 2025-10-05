@@ -84,7 +84,7 @@ class TodoApp(tk.Tk):
 
         self.tree.column("No", width=50, anchor="center")
         self.tree.column("Title", width=250)
-        self.tree.column("Due Date", width=100, anchor="center")
+        self.tree.column("Due Date", width=120, anchor="center")
         self.tree.column("Done", width=100, anchor="center")
 
         self.tree.grid(row=1, column=0, sticky="nsew", padx=(10, 0), pady=10)
@@ -99,14 +99,19 @@ class TodoApp(tk.Tk):
         btn_frame.grid(row=1, column=1, sticky="ns", padx=10, pady=10)
 
         btn_style = {"width": 15, "height": 2, "font": ("Arial", 10, "bold")}
-        tk.Button(btn_frame, text="Add Task", command=self.add_task, bg="#4CAF50", fg="white", activebackground="#45a049", **btn_style).pack(pady=5)
-        tk.Button(btn_frame, text="Update Task", command=self.update_task, bg="#2196F3", fg="white", activebackground="#1976D2", **btn_style).pack(pady=5)
-        tk.Button(btn_frame, text="Delete Task", command=self.delete_task, bg="#f44336", fg="white", activebackground="#e53935", **btn_style).pack(pady=5)
-        tk.Button(btn_frame, text="View Details", command=self.view_details, bg="#9C27B0", fg="white", activebackground="#7B1FA2", **btn_style).pack(pady=5)
+        tk.Button(btn_frame, text="Add Task", command=self.add_task, bg="#4CAF50", fg="white",
+                  activebackground="#45a049", **btn_style).pack(pady=5)
+        tk.Button(btn_frame, text="Update Task", command=self.update_task, bg="#2196F3", fg="white",
+                  activebackground="#1976D2", **btn_style).pack(pady=5)
+        tk.Button(btn_frame, text="Delete Task", command=self.delete_task, bg="#f44336", fg="white",
+                  activebackground="#e53935", **btn_style).pack(pady=5)
+        tk.Button(btn_frame, text="View Details", command=self.view_details, bg="#9C27B0", fg="white",
+                  activebackground="#7B1FA2", **btn_style).pack(pady=5)
 
         # Status bar
         self.status_var = tk.StringVar()
-        status_label = tk.Label(self, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W, bg="#e0e0e0", fg="#333")
+        status_label = tk.Label(self, textvariable=self.status_var, bd=1, relief=tk.SUNKEN,
+                                anchor=tk.W, bg="#e0e0e0", fg="#333")
         status_label.grid(row=2, column=0, columnspan=2, sticky="ew", pady=5)
 
         # Load tasks initially
@@ -123,7 +128,8 @@ class TodoApp(tk.Tk):
             due_text = due if due else '-'
             done_text = 'Yes' if completed else 'No'
             tag = "oddrow" if idx % 2 == 1 else "evenrow"
-            self.tree.insert('', 'end', iid=str(task_id), values=(idx, title, due_text, done_text), tags=(tag,))
+            self.tree.insert('', 'end', iid=str(task_id),
+                             values=(idx, title, due_text, done_text), tags=(tag,))
 
         self.tree.tag_configure("oddrow", background="#ffffff")
         self.tree.tag_configure("evenrow", background="#f0f0f0")
@@ -166,7 +172,13 @@ class TodoApp(tk.Tk):
 
         if task:
             _, title, desc, due, completed, created = task
-            details = f"Title: {title}\nDescription: {desc}\nDue Date: {due}\nCompleted: {'Yes' if completed else 'No'}\nCreated At: {created}"
+            details = (
+                f"Title: {title}\n\n"
+                f"Description: {desc}\n\n"
+                f"Due Date: {due or '-'}\n"
+                f"Completed: {'Yes' if completed else 'No'}\n"
+                f"Created At: {created}"
+            )
             messagebox.showinfo("Task Details", details)
 
 # ---------------------- Task Editor ----------------------
@@ -174,28 +186,41 @@ class TaskEditor(tk.Toplevel):
     def __init__(self, master, title, task_id=None):
         super().__init__(master)
         self.task_id = task_id
+        self.master = master
         self.title(title)
-        self.geometry("400x300")
+        self.geometry("420x360")
         self.configure(bg="#ffffff")
 
-        tk.Label(self, text="Title:", bg="#ffffff").pack(pady=5)
-        self.title_entry = tk.Entry(self, width=40)
+        # Frame
+        frame = tk.Frame(self, bg="#ffffff", padx=10, pady=10)
+        frame.pack(fill="both", expand=True)
+
+        tk.Label(frame, text="Title:", bg="#ffffff", font=("Arial", 10, "bold")).pack(anchor="w", pady=(5, 0))
+        self.title_entry = tk.Entry(frame, width=45)
         self.title_entry.pack(pady=5)
 
-        tk.Label(self, text="Description:", bg="#ffffff").pack(pady=5)
-        self.desc_entry = tk.Text(self, width=40, height=5)
+        tk.Label(frame, text="Description:", bg="#ffffff", font=("Arial", 10, "bold")).pack(anchor="w")
+        self.desc_entry = tk.Text(frame, width=45, height=5)
         self.desc_entry.pack(pady=5)
 
-        tk.Label(self, text="Due Date (YYYY-MM-DD):", bg="#ffffff").pack(pady=5)
-        self.due_entry = tk.Entry(self, width=40)
+        tk.Label(frame, text="Due Date (YYYY-MM-DD):", bg="#ffffff", font=("Arial", 10, "bold")).pack(anchor="w")
+        self.due_entry = tk.Entry(frame, width=45)
         self.due_entry.pack(pady=5)
 
         self.completed_var = tk.IntVar()
-        tk.Checkbutton(self, text="Completed", variable=self.completed_var, bg="#ffffff").pack(pady=5)
+        tk.Checkbutton(frame, text="Completed", variable=self.completed_var, bg="#ffffff").pack(anchor="w", pady=5)
 
-        tk.Button(self, text="Save", command=self.save_task, bg="#4CAF50", fg="white").pack(pady=10)
+        # Bottom buttons
+        btn_frame = tk.Frame(frame, bg="#ffffff")
+        btn_frame.pack(pady=15, anchor="e")
 
-        if task_id:
+        tk.Button(btn_frame, text="Save Task", command=self.save_task, bg="#4CAF50", fg="white",
+                  width=12, font=("Arial", 10, "bold"), relief="flat", cursor="hand2").pack(side="right", padx=5)
+        tk.Button(btn_frame, text="Cancel", command=self.destroy, bg="#9E9E9E", fg="white",
+                  width=12, font=("Arial", 10, "bold"), relief="flat", cursor="hand2").pack(side="right")
+
+        # If editing, load data
+        if self.task_id:
             self.load_task()
 
     def load_task(self):
@@ -219,8 +244,16 @@ class TaskEditor(tk.Toplevel):
         completed = self.completed_var.get()
 
         if not title:
-            messagebox.showerror("Error", "Title cannot be empty")
+            messagebox.showerror("Error", "Title cannot be empty.")
             return
+
+        # Validate date format (optional)
+        if due:
+            try:
+                datetime.strptime(due, "%Y-%m-%d")
+            except ValueError:
+                messagebox.showerror("Error", "Due date must be in YYYY-MM-DD format.")
+                return
 
         if self.task_id:
             update_task_db(self.task_id, title, desc, due, completed)
