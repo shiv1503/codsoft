@@ -35,8 +35,7 @@ def add_contact():
 def show_contacts():
     contact_listbox.delete(0, tk.END)
     for c in contacts:
-        contact_listbox.insert(tk.END, f"{c['name']} - {c['phone']}")
-
+             contact_listbox.insert(tk.END, f"{c['name']} - {c['phone']} - {c['email']} - {c['address']}")
 # Function to clear input fields
 def clear_inputs():
     name_input.delete(0, tk.END)
