@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import math
 
-#CALCULATOR APP 
+#CALCULATOR APP# 
 class Calculator(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -119,7 +119,7 @@ class Calculator(tk.Tk):
             self.display_var.set(self.expression)
 
 
-# ---------------- RUN APP ---------------- #
+#RUN APP#
 if __name__ == "__main__":
     app = Calculator()
     app.mainloop()
